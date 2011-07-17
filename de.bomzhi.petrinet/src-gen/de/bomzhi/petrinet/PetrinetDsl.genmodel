@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.bomzhi.petrinet/src-gen"
+    editDirectory="/de.bomzhi.petrinet.edit/src" editorDirectory="/de.bomzhi.petrinet.editor/src"
+    modelPluginID="de.bomzhi.petrinet" forceOverwrite="true" modelName="PetrinetDsl"
+    updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="de.bomzhi.petrinet.edit"
+    editorPluginID="de.bomzhi.petrinet.editor">
+  <genPackages prefix="PetrinetDsl" basePackage="de.bomzhi.petrinet" disposableProviderFactory="true"
+      ecorePackage="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#/">
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PetriNet">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PetriNet/resources"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PetriNet/places"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PetriNet/transactions"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Resource">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Resource/name"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Place">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Place/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Place/storages"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Storage">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Storage/resourceRef"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Storage/count"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Storage/capacity"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Transaction">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Transaction/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Transaction/assureStatements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Transaction/takeStatements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//Transaction/putStatements"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//AssureStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//AssureStatement/count"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//AssureStatement/resourceRef"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//AssureStatement/placeRef"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//TakeStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//TakeStatement/count"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//TakeStatement/resourceRef"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//TakeStatement/placeRef"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PutStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PutStatement/count"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PutStatement/resourceRef"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference platform:/resource/de.bomzhi.petrinet/src-gen/de/bomzhi/petrinet/PetrinetDsl.ecore#//PutStatement/placeRef"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

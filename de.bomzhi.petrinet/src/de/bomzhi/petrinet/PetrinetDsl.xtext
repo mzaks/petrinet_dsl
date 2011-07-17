@@ -1,0 +1,45 @@
+grammar de.bomzhi.petrinet.PetrinetDsl with org.eclipse.xtext.common.Terminals
+
+generate petrinetDsl "http://www.bomzhi.de/petrinet/PetrinetDsl"
+
+PetriNet:
+	(resources+=Resource)+
+	(places+=Place)+
+	(transactions+=Transaction)+
+	;
+
+Resource:
+	'resource' name=ID;
+
+Place:
+	'place' name=ID '{'
+		(storages+=Storage)*
+	'}'
+;
+
+Storage:
+	resourceRef=[Resource] ':' count=INT '/'(capacity=INT | '..')
+;
+
+Transaction:
+	'transaction' name=ID '{'
+		(assureStatements += AssureStatement)*
+		(takeStatements += TakeStatement)*
+		(putStatements += PutStatement)*
+	'}'	
+;
+
+AssureStatement:
+	'assure' count=INT resourceRef = [Resource] 'in' placeRef=[Place]
+;
+
+
+TakeStatement:
+	'take' count=INT resourceRef = [Resource] 'from' placeRef=[Place]
+;
+
+
+PutStatement:
+	'put' count=INT resourceRef = [Resource] 'into' placeRef=[Place]
+;
+
