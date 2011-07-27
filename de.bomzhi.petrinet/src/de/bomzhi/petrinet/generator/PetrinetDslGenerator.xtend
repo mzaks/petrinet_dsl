@@ -6,10 +6,106 @@ package de.bomzhi.petrinet.generator
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
+import de.bomzhi.petrinet.petrinetDsl.PetriNet
+import de.bomzhi.petrinet.petrinetDsl.Transaction
+import de.bomzhi.petrinet.petrinetDsl.AssureStatement
+import de.bomzhi.petrinet.petrinetDsl.Place
+import de.bomzhi.petrinet.petrinetDsl.Storage
 
 class PetrinetDslGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-		//TODO implment me
+		fsa.generateFile(resource.className+".scala", toJavaCode(resource.contents.head as PetriNet))
 	}
+	
+	def className(Resource res) {
+		var name = res.URI.lastSegment
+		return name.substring(0, name.indexOf('.'))
+	}
+	
+	def toJavaCode(PetriNet pn) '''
+		package de.bomzhi.petrinetdsl
+		
+		object PetriNet extends App {
+			«defineAbstractClasses()»
+			
+			«defineResourcesAndPlaces(pn)»
+		}
+		
+	'''
+	
+	
+	def defineAbstractClasses() '''
+		abstract class Resource
+		
+		case class Storage(val resource : Resource, 
+						var count : Int, val capacity : Int)
+						
+		abstract class Place {
+			val storages : List[Storage]
+		}
+		
+		abstract class Statement(val count : Int, val resource : Resource, val place : Place)
+		
+		case class Assure(override val count : Int, override val resource : Resource, override val place : Place) extends Statement(count, resource, place)
+		case class Take(override val count : Int, override val resource : Resource, override val place : Place) extends Statement(count, resource, place)
+		case class Put(override val count : Int, override val resource : Resource, override val place : Place) extends Statement(count, resource, place)
+		
+		class Transaction(name : String, statements: List[Statement]){
+		    def isAlive : Boolean = {
+				statements.forall((statement) => {
+					val actStorage = statement.place.storages.find(_.resource == statement.resource).getOrElse(return false)
+					statement match {
+						case assure : Assure => if(assure.count == 0 ) actStorage.count == 0 else actStorage.count >= assure.count
+						case take : Take => actStorage.count >= take.count
+						case put : Put => actStorage.capacity == 0 || actStorage.capacity >= actStorage.count + put.count
+					}
+				})
+			}
+			def execute() {
+				println("Executing transaction " + name)
+				statements.foreach((statement) => {
+					val actStorage = statement.place.storages.find(_.resource == statement.resource).get
+					statement match {
+						case take : Take => actStorage.count -= take.count
+						case put : Put => actStorage.count += put.count
+						case _ =>
+					}
+				})
+			}
+			override def toString = name
+		}
+				
+	'''
+	
+	def defineResourcesAndPlaces(PetriNet pn) '''
+		«FOR resource : pn.resources»
+		object «resource.name» extends Resource
+		«ENDFOR»
+		«FOR place : pn.places»
+		object «place.name» extends Place {
+			val storages = 
+				«FOR storage : place.storages»Storage(«storage.resourceRef.name», «storage.count», «storage.capacity»)::«ENDFOR»Nil
+		}
+		«ENDFOR»
+		val transactions = 
+		«FOR transaction : pn.transactions»
+			new Transaction( "«transaction.name»",
+				«FOR statement : transaction.assureStatements»Assure(«statement.count», «statement.resourceRef.name», «statement.placeRef.name») ::«ENDFOR»
+				«FOR statement : transaction.takeStatements»Take(«statement.count», «statement.resourceRef.name», «statement.placeRef.name») ::«ENDFOR»
+				«FOR statement : transaction.putStatements»Put(«statement.count», «statement.resourceRef.name», «statement.placeRef.name») ::«ENDFOR»Nil
+			) ::
+		«ENDFOR»
+		Nil
+		
+		var lifeTr = transactions.filter(_.isAlive)
+		println("Transactions: " + transactions)
+		println("Transactions alive: " + lifeTr)
+		lifeTr(0).execute()
+		lifeTr = transactions.filter(_.isAlive)
+		println("Transactions alive: " + lifeTr)
+		lifeTr(0).execute()
+		lifeTr = transactions.filter(_.isAlive)
+		println("Transactions alive: " + lifeTr)
+	'''	
 }
