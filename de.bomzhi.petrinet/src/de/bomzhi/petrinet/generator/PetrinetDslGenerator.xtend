@@ -30,19 +30,27 @@ class PetrinetDslGenerator implements IGenerator {
 			ÇdefineAbstractClasses()È
 			
 			ÇdefineResourcesAndPlaces(pn)È
+			
+			ÇdefineMainLoop()È
 		}
 		
 	'''
 	
 	
 	def defineAbstractClasses() '''
-		abstract class Resource
+		abstract class Resource(val label:String)
 		
 		case class Storage(val resource : Resource, 
 						var count : Int, val capacity : Int)
 						
 		abstract class Place {
 			val storages : List[Storage]
+			override def toString = {
+				def capacity(st:Storage)={
+					if(st.capacity == 0) ".." else st.capacity
+				}
+				storages.foldLeft("")((text, st) => text+"['" + st.resource.label + "' " + st.count + "/" + capacity(st) + "]")
+			}
 		}
 		
 		abstract class Statement(val count : Int, val resource : Resource, val place : Place)
@@ -80,7 +88,7 @@ class PetrinetDslGenerator implements IGenerator {
 	
 	def defineResourcesAndPlaces(PetriNet pn) '''
 		ÇFOR resource : pn.resourcesÈ
-		object Çresource.nameÈ extends Resource
+		object Çresource.nameÈ extends Resource("Çresource.nameÈ")
 		ÇENDFORÈ
 		ÇFOR place : pn.placesÈ
 		object Çplace.nameÈ extends Place {
@@ -91,21 +99,36 @@ class PetrinetDslGenerator implements IGenerator {
 		val transactions = 
 		ÇFOR transaction : pn.transactionsÈ
 			new Transaction( "Çtransaction.nameÈ",
-				ÇFOR statement : transaction.assureStatementsÈAssure(Çstatement.countÈ, Çstatement.resourceRef.nameÈ, Çstatement.placeRef.nameÈ) ::ÇENDFORÈ
-				ÇFOR statement : transaction.takeStatementsÈTake(Çstatement.countÈ, Çstatement.resourceRef.nameÈ, Çstatement.placeRef.nameÈ) ::ÇENDFORÈ
-				ÇFOR statement : transaction.putStatementsÈPut(Çstatement.countÈ, Çstatement.resourceRef.nameÈ, Çstatement.placeRef.nameÈ) ::ÇENDFORÈNil
+				ÇFOR statement : transaction.assureStatementsÈAssure(Çstatement.countÈ, Çstatement.resourceRef.nameÈ, Çstatement.placeRef.nameÈ) :: ÇENDFORÈ
+				ÇFOR statement : transaction.takeStatementsÈTake(Çstatement.countÈ, Çstatement.resourceRef.nameÈ, Çstatement.placeRef.nameÈ) :: ÇENDFORÈ
+				ÇFOR statement : transaction.putStatementsÈPut(Çstatement.countÈ, Çstatement.resourceRef.nameÈ, Çstatement.placeRef.nameÈ) :: ÇENDFORÈNil
 			) ::
 		ÇENDFORÈ
 		Nil
 		
-		var lifeTr = transactions.filter(_.isAlive)
-		println("Transactions: " + transactions)
-		println("Transactions alive: " + lifeTr)
-		lifeTr(0).execute()
-		lifeTr = transactions.filter(_.isAlive)
-		println("Transactions alive: " + lifeTr)
-		lifeTr(0).execute()
-		lifeTr = transactions.filter(_.isAlive)
-		println("Transactions alive: " + lifeTr)
+		def printState() {
+			ÇFOR place : pn.placesÈ
+			println("Çplace.nameÈ: " + Çplace.nameÈ)
+			ÇENDFORÈ
+		}
 	'''	
+	
+	def defineMainLoop()'''
+		
+		var lifeTr = transactions.filter(_.isAlive)
+
+		while(!lifeTr.isEmpty){
+			printState()
+			println("Choose transaction:")
+			lifeTr.foreach((tr) => println("" + (lifeTr.indexOf(tr)+1) + ". Transaction: " + tr))
+			val input = readLine()
+			try {
+				val trIndex = input.toInt;
+				lifeTr(trIndex-1).execute()
+			} catch {
+				case _ => println("Please enter correct transaction index!\n")
+			}
+			lifeTr = transactions.filter(_.isAlive)
+		}
+	'''
 }

@@ -57,6 +57,12 @@ public class PetrinetDslGenerator implements IGenerator {
     StringConcatenation _defineResourcesAndPlaces = this.defineResourcesAndPlaces(pn);
     _builder.append(_defineResourcesAndPlaces, "	");
     _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.newLine();
+    _builder.append("\t");
+    StringConcatenation _defineMainLoop = this.defineMainLoop();
+    _builder.append(_defineMainLoop, "	");
+    _builder.newLineIfNotEmpty();
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
@@ -65,7 +71,7 @@ public class PetrinetDslGenerator implements IGenerator {
   
   public StringConcatenation defineAbstractClasses() {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("abstract class Resource");
+    _builder.append("abstract class Resource(val label:String)");
     _builder.newLine();
     _builder.newLine();
     _builder.append("case class Storage(val resource : Resource, ");
@@ -79,6 +85,24 @@ public class PetrinetDslGenerator implements IGenerator {
     _builder.newLine();
     _builder.append("\t");
     _builder.append("val storages : List[Storage]");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("override def toString = {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("def capacity(st:Storage)={");
+    _builder.newLine();
+    _builder.append("\t\t\t");
+    _builder.append("if(st.capacity == 0) \"..\" else st.capacity");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("storages.foldLeft(\"\")((text, st) => text+\"[\'\" + st.resource.label + \"\' \" + st.count + \"/\" + capacity(st) + \"]\")");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
@@ -176,7 +200,10 @@ public class PetrinetDslGenerator implements IGenerator {
         _builder.append("object ");
         String _name = resource.getName();
         _builder.append(_name, "");
-        _builder.append(" extends Resource");
+        _builder.append(" extends Resource(\"");
+        String _name_1 = resource.getName();
+        _builder.append(_name_1, "");
+        _builder.append("\")");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -184,8 +211,8 @@ public class PetrinetDslGenerator implements IGenerator {
       EList<Place> _places = pn.getPlaces();
       for(Place place : _places) {
         _builder.append("object ");
-        String _name_1 = place.getName();
-        _builder.append(_name_1, "");
+        String _name_2 = place.getName();
+        _builder.append(_name_2, "");
         _builder.append(" extends Place {");
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
@@ -197,8 +224,8 @@ public class PetrinetDslGenerator implements IGenerator {
           for(Storage storage : _storages) {
             _builder.append("Storage(");
             de.bomzhi.petrinet.petrinetDsl.Resource _resourceRef = storage.getResourceRef();
-            String _name_2 = _resourceRef.getName();
-            _builder.append(_name_2, "		");
+            String _name_3 = _resourceRef.getName();
+            _builder.append(_name_3, "		");
             _builder.append(", ");
             int _count = storage.getCount();
             _builder.append(_count, "		");
@@ -220,8 +247,8 @@ public class PetrinetDslGenerator implements IGenerator {
       EList<Transaction> _transactions = pn.getTransactions();
       for(Transaction transaction : _transactions) {
         _builder.append("new Transaction( \"");
-        String _name_3 = transaction.getName();
-        _builder.append(_name_3, "");
+        String _name_4 = transaction.getName();
+        _builder.append(_name_4, "");
         _builder.append("\",");
         _builder.newLineIfNotEmpty();
         _builder.append("\t");
@@ -233,13 +260,13 @@ public class PetrinetDslGenerator implements IGenerator {
             _builder.append(_count_1, "	");
             _builder.append(", ");
             de.bomzhi.petrinet.petrinetDsl.Resource _resourceRef_1 = statement.getResourceRef();
-            String _name_4 = _resourceRef_1.getName();
-            _builder.append(_name_4, "	");
+            String _name_5 = _resourceRef_1.getName();
+            _builder.append(_name_5, "	");
             _builder.append(", ");
             Place _placeRef = statement.getPlaceRef();
-            String _name_5 = _placeRef.getName();
-            _builder.append(_name_5, "	");
-            _builder.append(") ::");
+            String _name_6 = _placeRef.getName();
+            _builder.append(_name_6, "	");
+            _builder.append(") :: ");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -252,13 +279,13 @@ public class PetrinetDslGenerator implements IGenerator {
             _builder.append(_count_2, "	");
             _builder.append(", ");
             de.bomzhi.petrinet.petrinetDsl.Resource _resourceRef_2 = statement_1.getResourceRef();
-            String _name_6 = _resourceRef_2.getName();
-            _builder.append(_name_6, "	");
+            String _name_7 = _resourceRef_2.getName();
+            _builder.append(_name_7, "	");
             _builder.append(", ");
             Place _placeRef_1 = statement_1.getPlaceRef();
-            String _name_7 = _placeRef_1.getName();
-            _builder.append(_name_7, "	");
-            _builder.append(") ::");
+            String _name_8 = _placeRef_1.getName();
+            _builder.append(_name_8, "	");
+            _builder.append(") :: ");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -271,13 +298,13 @@ public class PetrinetDslGenerator implements IGenerator {
             _builder.append(_count_3, "	");
             _builder.append(", ");
             de.bomzhi.petrinet.petrinetDsl.Resource _resourceRef_3 = statement_2.getResourceRef();
-            String _name_8 = _resourceRef_3.getName();
-            _builder.append(_name_8, "	");
+            String _name_9 = _resourceRef_3.getName();
+            _builder.append(_name_9, "	");
             _builder.append(", ");
             Place _placeRef_2 = statement_2.getPlaceRef();
-            String _name_9 = _placeRef_2.getName();
-            _builder.append(_name_9, "	");
-            _builder.append(") ::");
+            String _name_10 = _placeRef_2.getName();
+            _builder.append(_name_10, "	");
+            _builder.append(") :: ");
           }
         }
         _builder.append("Nil");
@@ -289,23 +316,69 @@ public class PetrinetDslGenerator implements IGenerator {
     _builder.append("Nil");
     _builder.newLine();
     _builder.newLine();
+    _builder.append("def printState() {");
+    _builder.newLine();
+    {
+      EList<Place> _places_1 = pn.getPlaces();
+      for(Place place_1 : _places_1) {
+        _builder.append("\t");
+        _builder.append("println(\"");
+        String _name_11 = place_1.getName();
+        _builder.append(_name_11, "	");
+        _builder.append(": \" + ");
+        String _name_12 = place_1.getName();
+        _builder.append(_name_12, "	");
+        _builder.append(")");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("}");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  public StringConcatenation defineMainLoop() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.newLine();
     _builder.append("var lifeTr = transactions.filter(_.isAlive)");
     _builder.newLine();
-    _builder.append("println(\"Transactions: \" + transactions)");
     _builder.newLine();
-    _builder.append("println(\"Transactions alive: \" + lifeTr)");
+    _builder.append("while(!lifeTr.isEmpty){");
     _builder.newLine();
-    _builder.append("lifeTr(0).execute()");
+    _builder.append("\t");
+    _builder.append("printState()");
     _builder.newLine();
+    _builder.append("\t");
+    _builder.append("println(\"Choose transaction:\")");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("lifeTr.foreach((tr) => println(\"\" + (lifeTr.indexOf(tr)+1) + \". Transaction: \" + tr))");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("val input = readLine()");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("try {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("val trIndex = input.toInt;");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("lifeTr(trIndex-1).execute()");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("} catch {");
+    _builder.newLine();
+    _builder.append("\t\t");
+    _builder.append("case _ => println(\"Please enter correct transaction index!\\n\")");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("\t");
     _builder.append("lifeTr = transactions.filter(_.isAlive)");
     _builder.newLine();
-    _builder.append("println(\"Transactions alive: \" + lifeTr)");
-    _builder.newLine();
-    _builder.append("lifeTr(0).execute()");
-    _builder.newLine();
-    _builder.append("lifeTr = transactions.filter(_.isAlive)");
-    _builder.newLine();
-    _builder.append("println(\"Transactions alive: \" + lifeTr)");
+    _builder.append("}");
     _builder.newLine();
     return _builder;
   }
